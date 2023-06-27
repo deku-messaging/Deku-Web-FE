@@ -19,14 +19,15 @@ import {
 import SendIcon from "@mui/icons-material/Send";
 import ModeRoundedIcon from "@mui/icons-material/ModeRounded";
 import { formatDistanceToNow } from "date-fns";
-import { Breakpoint } from "react-socks";
 import CssBaseline from "@mui/material/CssBaseline";
+import { createTheme, ThemeProvider } from "@mui/material/styles";
+import useMediaQuery from "@mui/material/useMediaQuery";
 
 const messages = [
   {
     id: 1,
     sender: "Me",
-    recipient: "Emily",
+    recipient: "Will",
     message:
       "Do you have a suggestion for a good present for John on his work anniversary? I am really confused and would love your thoughts on it.",
     avatar: "",
@@ -157,6 +158,19 @@ const getThreadLabel = (timestamp) => {
 };
 
 export default function App() {
+  // Theme
+  const prefersDarkMode = useMediaQuery("(prefers-color-scheme: dark)");
+
+  const theme = React.useMemo(
+    () =>
+      createTheme({
+        palette: {
+          mode: prefersDarkMode ? "dark" : "light",
+        },
+      }),
+    [prefersDarkMode]
+  );
+  //Theme End
   const [selectedThread, setSelectedThread] = useState(null);
   const [inputMessage, setInputMessage] = useState("");
 
@@ -191,7 +205,7 @@ export default function App() {
 
   return (
     <div>
-      <Breakpoint large up>
+      <ThemeProvider theme={theme}>
         <Box sx={{ flexGrow: 1 }}>
           <Grid container spacing={2}>
             {/* Threads */}
@@ -246,7 +260,7 @@ export default function App() {
                             onClick={() => handleOpenThread(index)}
                             sx={{
                               bgcolor:
-                                selectedThread === index ? "#000080" : "",
+                                selectedThread === index ? "#1565C0" : "",
                             }}
                           >
                             <ListItemAvatar>
@@ -264,14 +278,15 @@ export default function App() {
                                 sx={{
                                   bgcolor: () => {
                                     const colors = [
-                                      "#EE2677", // pink
-                                      "#558B6E", // dark green
-                                      "#000080", // dark blue
-                                      "#808000", // dark yellow
-                                      "#800080", // dark magenta
-                                      "#008080", // dark cyan
-                                      "#E86252", // dark orange
-                                      "#380036", // dark purple
+                                      // "#EE2677", // pink
+                                      "#C8553D",
+                                      "#FF8200",
+                                      "#CC59D2",
+                                      "#FDE12D",
+                                      "#F487B6",
+                                      "#CB807D",
+                                      "#276FBF",
+                                      "#20A39E",
                                     ];
 
                                     const index =
@@ -360,7 +375,7 @@ export default function App() {
             >
               {selectedThread !== null ? (
                 // Render open thread view
-                <Box sx={{ bgcolor: "background.message.dark", width: "100%" }}>
+                <Box sx={{ width: "100%" }}>
                   <Typography
                     variant="h5"
                     position="sticky"
@@ -371,13 +386,12 @@ export default function App() {
                       pb: 0,
                       top: 0,
                     }}
-                    bgcolor={"#000000"}
                   >
                     {threads[selectedThread][0].recipient === "Me"
                       ? threads[selectedThread][0].sender
                       : threads[selectedThread][0].recipient}
                   </Typography>
-
+                  <hr />
                   <Box className="messages">
                     {threads[selectedThread].map((message, index) => (
                       <Box
@@ -407,14 +421,14 @@ export default function App() {
                               sx={{
                                 bgcolor: () => {
                                   const colors = [
-                                    "#800000", // dark red
-                                    "#008000", // dark green
-                                    "#000080", // dark blue
-                                    "#808000", // dark yellow
-                                    "#800080", // dark magenta
-                                    "#008080", // dark cyan
-                                    "#A35800", // dark orange
-                                    "#400040", // dark purple
+                                    "#C8553D",
+                                    "#FF8200",
+                                    "#CC59D2",
+                                    "#FDE12D",
+                                    "#F487B6",
+                                    "#CB807D",
+                                    "#276FBF",
+                                    "#20A39E",
                                   ];
 
                                   const index =
@@ -465,7 +479,6 @@ export default function App() {
                     style={{ position: "fixed", bottom: 0, zIndex: 2 }}
                     width="70%"
                     mb={5}
-                    boxShadow={"inset 27px -27px 87px #000000"}
                   >
                     {/* Send Message Input */}
                     <Box display="flex" alignItems="center" padding="8px">
@@ -508,7 +521,7 @@ export default function App() {
             </Grid>
           </Grid>
         </Box>
-      </Breakpoint>
+      </ThemeProvider>
     </div>
   );
 }
