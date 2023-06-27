@@ -14,8 +14,10 @@ import {
   IconButton,
   ListItemSecondaryAction,
   Badge,
+  Button,
 } from "@mui/material";
 import SendIcon from "@mui/icons-material/Send";
+import ModeRoundedIcon from "@mui/icons-material/ModeRounded";
 import { formatDistanceToNow } from "date-fns";
 import { Breakpoint } from "react-socks";
 import CssBaseline from "@mui/material/CssBaseline";
@@ -58,6 +60,35 @@ const messages = [
     avatar: "",
     timestamp: "2023-01-23T16:10:00Z",
   },
+
+  {
+    id: 6,
+    sender: "Promise",
+    recipient: "Me",
+    message:
+      "Could you please recommend a good gift for John on his work anniversary? I'm feeling quite indecisive and would appreciate your input.",
+    avatar: "",
+    timestamp: "2023-01-23T16:10:00Z",
+  },
+
+  {
+    id: 7,
+    sender: "Vanessa",
+    recipient: "Me",
+    message:
+      "Could you please recommend a good gift for John on his work anniversary? I'm feeling quite indecisive and would appreciate your input.",
+    avatar: "",
+    timestamp: "2023-01-23T16:10:00Z",
+  },
+
+  {
+    id: 8,
+    sender: "Sophia",
+    recipient: "Me",
+    message: "How about a tee which says 'I'm a douche bag",
+    avatar: "",
+    timestamp: "2023-01-23T16:10:00Z",
+  },
 ];
 
 const groupThreads = (messages) => {
@@ -87,8 +118,8 @@ const groupThreads = (messages) => {
 
 const sortThreads = (threads) => {
   const sortedThreads = Object.values(threads).sort((a, b) => {
-    const latestMessageA = a[a.length - 1].timestamp;
-    const latestMessageB = b[b.length - 1].timestamp;
+    const latestMessageA = new Date(a[a.length - 1].timestamp);
+    const latestMessageB = new Date(b[b.length - 1].timestamp);
     return latestMessageB - latestMessageA;
   });
   return sortedThreads;
@@ -167,12 +198,20 @@ export default function App() {
             <Grid item xs={3} style={{ maxHeight: "100vh", overflow: "auto" }}>
               <React.Fragment>
                 <CssBaseline />
-                <Paper square sx={{ pb: "50px" }} position="fixed">
+                <Box
+                  bgcolor="background.paper"
+                  position="sticky"
+                  mponent="nav"
+                  sx={{
+                    top: 0,
+                    zIndex: 1,
+                  }}
+                >
                   <Typography
                     variant="h5"
                     position="sticky"
                     gutterBottom
-                    component="div"
+                    component="nav"
                     sx={{
                       p: 2,
                       pb: 0,
@@ -181,7 +220,17 @@ export default function App() {
                     }}
                   >
                     Messages
+                    <Box sx={{ pt: 2 }}>
+                      <Button
+                        variant="contained"
+                        startIcon={<ModeRoundedIcon />}
+                      >
+                        Start Chat
+                      </Button>
+                    </Box>
                   </Typography>
+                </Box>
+                <Paper square sx={{ pb: "50px" }} position="fixed">
                   <List sx={{ mb: 2 }}>
                     {threads.map((thread, index) => {
                       const [firstMessage] = thread;
@@ -215,14 +264,14 @@ export default function App() {
                                 sx={{
                                   bgcolor: () => {
                                     const colors = [
-                                      "#800000", // dark red
-                                      "#008000", // dark green
+                                      "#EE2677", // pink
+                                      "#558B6E", // dark green
                                       "#000080", // dark blue
                                       "#808000", // dark yellow
                                       "#800080", // dark magenta
                                       "#008080", // dark cyan
-                                      "#A35800", // dark orange
-                                      "#400040", // dark purple
+                                      "#E86252", // dark orange
+                                      "#380036", // dark purple
                                     ];
 
                                     const index =
@@ -321,7 +370,6 @@ export default function App() {
                       p: 2,
                       pb: 0,
                       top: 0,
-                      //zIndex: 1,
                     }}
                     bgcolor={"#000000"}
                   >
@@ -383,7 +431,7 @@ export default function App() {
                             sx={{
                               p: 2,
                               bgcolor:
-                                message.sender === "Me" ? "grey" : "#2979ff",
+                                message.sender === "Me" ? "#F4F2F3" : "#2979ff",
                               color: "#000000",
                               borderRadius: "10px",
                               width: "50%",
