@@ -48,15 +48,7 @@ const messages = [
     avatar: "",
     timestamp: "2023-04-18T10:20:00Z",
   },
-  {
-    id: 4,
-    sender: "Me",
-    recipient: "Olivia",
-    message:
-      "Could you please recommend a good gift for John on his work anniversary? I'm feeling quite indecisive and would appreciate your input.",
-    avatar: "",
-    timestamp: "2023-01-23T16:10:00Z",
-  },
+
   {
     id: 5,
     sender: "Olivia",
@@ -145,9 +137,12 @@ export default function App() {
 
   const handleSendMessage = () => {
     messages.push({
-      id: 3,
+      id: messages.length + 1,
       sender: "Me",
-      recipient: "Ethan",
+      recipient:
+        messages[selectedThread].recipient === "Me"
+          ? messages[selectedThread].sender
+          : messages[selectedThread].recipient,
       message: inputMessage,
       avatar: "",
       timestamp: new Date(),
@@ -207,8 +202,16 @@ export default function App() {
                           >
                             <ListItemAvatar>
                               <Avatar
-                                alt={firstMessage.recipient[0].toUpperCase()}
-                                src={firstMessage.recipient[0].toUpperCase()}
+                                alt={
+                                  firstMessage.recipient === "Me"
+                                    ? firstMessage.sender[0].toUpperCase()
+                                    : firstMessage.recipient[0].toUpperCase()
+                                }
+                                src={
+                                  firstMessage.recipient === "Me"
+                                    ? firstMessage.sender[0].toUpperCase()
+                                    : firstMessage.recipient[0].toUpperCase()
+                                }
                                 sx={{
                                   bgcolor: () => {
                                     const colors = [
@@ -223,8 +226,12 @@ export default function App() {
                                     ];
 
                                     const index =
-                                      firstMessage.recipient[0].charCodeAt(0) %
-                                      colors.length;
+                                      firstMessage.recipient === "Me"
+                                        ? firstMessage.sender[0].charCodeAt(0) %
+                                          colors.length
+                                        : firstMessage.recipient[0].charCodeAt(
+                                            0
+                                          ) % colors.length;
                                     return colors[index];
                                   },
                                   color: "white",
@@ -232,7 +239,11 @@ export default function App() {
                               />
                             </ListItemAvatar>
                             <ListItemText
-                              primary={firstMessage.recipient}
+                              primary={
+                                firstMessage.recipient === "Me"
+                                  ? firstMessage.sender
+                                  : firstMessage.recipient
+                              }
                               secondary={
                                 <Box
                                   sx={{
@@ -314,7 +325,9 @@ export default function App() {
                     }}
                     bgcolor={"#000000"}
                   >
-                    {threads[selectedThread][0].recipient}
+                    {threads[selectedThread][0].recipient === "Me"
+                      ? threads[selectedThread][0].sender
+                      : threads[selectedThread][0].recipient}
                   </Typography>
 
                   <Box className="messages">
@@ -336,13 +349,13 @@ export default function App() {
                           sx={{
                             display: "flex",
                             flexDirection:
-                              message.sender === "Me" ? "row" : "row-reverse",
+                              message.sender === "Me" ? "row-reverse" : "row",
                           }}
                         >
                           <ListItemAvatar>
                             <Avatar
-                              alt={message.recipient[0].toUpperCase()}
-                              src={message.recipient[0].toUpperCase()}
+                              alt={message.sender[0].toUpperCase()}
+                              src={message.sender[0].toUpperCase()}
                               sx={{
                                 bgcolor: () => {
                                   const colors = [
@@ -357,7 +370,7 @@ export default function App() {
                                   ];
 
                                   const index =
-                                    message.recipient[0].charCodeAt(0) %
+                                    message.sender[0].charCodeAt(0) %
                                     colors.length;
                                   return colors[index];
                                 },
@@ -370,10 +383,10 @@ export default function App() {
                             sx={{
                               p: 2,
                               bgcolor:
-                                message.sender === "Me" ? "#2979ff" : "#e0e0e0",
+                                message.sender === "Me" ? "grey" : "#2979ff",
                               color: "#000000",
                               borderRadius: "10px",
-                              width: "70%",
+                              width: "50%",
                             }}
                           >
                             {message.message}
@@ -386,8 +399,8 @@ export default function App() {
                           sx={{
                             alignSelf:
                               message.sender === "Me"
-                                ? "flex-start"
-                                : "flex-end",
+                                ? "flex-end"
+                                : "flex-start",
                             mt: 1,
                             mx: 10,
                           }}
