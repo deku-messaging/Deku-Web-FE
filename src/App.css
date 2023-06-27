@@ -1,0 +1,10 @@
+.me {
+  display: flex;
+  justify-content: flex-end;
+  margin-bottom: 16px;
+}
+
+.recipient {
+  display: flex;
+  margin-bottom: 16px;
+}
