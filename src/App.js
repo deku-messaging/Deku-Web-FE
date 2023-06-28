@@ -20,8 +20,6 @@ import SendIcon from "@mui/icons-material/Send";
 import ModeRoundedIcon from "@mui/icons-material/ModeRounded";
 import { formatDistanceToNow } from "date-fns";
 import CssBaseline from "@mui/material/CssBaseline";
-import { createTheme, ThemeProvider } from "@mui/material/styles";
-import useMediaQuery from "@mui/material/useMediaQuery";
 
 const messages = [
   {
@@ -158,19 +156,6 @@ const getThreadLabel = (timestamp) => {
 };
 
 export default function App() {
-  // Theme
-  const prefersDarkMode = useMediaQuery("(prefers-color-scheme: dark)");
-
-  const theme = React.useMemo(
-    () =>
-      createTheme({
-        palette: {
-          mode: prefersDarkMode ? "dark" : "light",
-        },
-      }),
-    [prefersDarkMode]
-  );
-  //Theme End
   const [selectedThread, setSelectedThread] = useState(null);
   const [inputMessage, setInputMessage] = useState("");
 
@@ -205,221 +190,74 @@ export default function App() {
 
   return (
     <div>
-      <ThemeProvider theme={theme}>
-        <Box sx={{ flexGrow: 1 }}>
-          <Grid container spacing={2}>
-            {/* Threads */}
-            <Grid item xs={3} style={{ maxHeight: "100vh", overflow: "auto" }}>
-              <React.Fragment>
-                <CssBaseline />
-                <Box
-                  bgcolor="background.paper"
+      <Box sx={{ flexGrow: 1 }}>
+        <Grid container spacing={2}>
+          {/* Threads */}
+          <Grid item xs={3} style={{ maxHeight: "100vh", overflow: "auto" }}>
+            <React.Fragment>
+              <CssBaseline />
+              <Box
+                bgcolor="background.paper"
+                position="sticky"
+                sx={{
+                  top: 0,
+                  zIndex: 1,
+                }}
+              >
+                <Typography
+                  variant="h5"
                   position="sticky"
+                  gutterBottom
+                  component="nav"
                   sx={{
+                    p: 2,
+                    pb: 0,
                     top: 0,
                     zIndex: 1,
                   }}
                 >
-                  <Typography
-                    variant="h5"
-                    position="sticky"
-                    gutterBottom
-                    component="nav"
-                    sx={{
-                      p: 2,
-                      pb: 0,
-                      top: 0,
-                      zIndex: 1,
-                    }}
-                  >
-                    Messages
-                    <Box sx={{ pt: 2 }}>
-                      <Button
-                        variant="contained"
-                        startIcon={<ModeRoundedIcon />}
-                      >
-                        Start Chat
-                      </Button>
-                    </Box>
-                  </Typography>
-                </Box>
-                <Paper square sx={{ pb: "50px" }} position="fixed">
-                  <List sx={{ mb: 2 }}>
-                    {threads.map((thread, index) => {
-                      const [firstMessage] = thread;
-                      const label = getThreadLabel(firstMessage.timestamp);
-                      const badgeContent = thread.length;
-                      return (
-                        <React.Fragment key={index}>
-                          <ListSubheader sx={{ bgcolor: "background.paper" }}>
-                            {label}
-                          </ListSubheader>{" "}
-                          <ListItem
-                            button
-                            onClick={() => handleOpenThread(index)}
-                            sx={{
-                              bgcolor:
-                                selectedThread === index ? "#1565C0" : "",
-                            }}
-                          >
-                            <ListItemAvatar>
-                              <Avatar
-                                alt={
-                                  firstMessage.recipient === "Me"
-                                    ? firstMessage.sender[0].toUpperCase()
-                                    : firstMessage.recipient[0].toUpperCase()
-                                }
-                                src={
-                                  firstMessage.recipient === "Me"
-                                    ? firstMessage.sender[0].toUpperCase()
-                                    : firstMessage.recipient[0].toUpperCase()
-                                }
-                                sx={{
-                                  bgcolor: () => {
-                                    const colors = [
-                                      // "#EE2677", // pink
-                                      "#C8553D",
-                                      "#FF8200",
-                                      "#CC59D2",
-                                      "#FDE12D",
-                                      "#F487B6",
-                                      "#CB807D",
-                                      "#276FBF",
-                                      "#20A39E",
-                                    ];
-
-                                    const index =
-                                      firstMessage.recipient === "Me"
-                                        ? firstMessage.sender[0].charCodeAt(0) %
-                                          colors.length
-                                        : firstMessage.recipient[0].charCodeAt(
-                                            0
-                                          ) % colors.length;
-                                    return colors[index];
-                                  },
-                                  color: "white",
-                                }}
-                              />
-                            </ListItemAvatar>
-                            <ListItemText
-                              primary={
-                                firstMessage.recipient === "Me"
-                                  ? firstMessage.sender
-                                  : firstMessage.recipient
-                              }
-                              secondary={
-                                <Box
-                                  sx={{
-                                    display: "flex",
-                                    flexDirection: "column",
-                                  }}
-                                >
-                                  <span>
-                                    {firstMessage.message.length > 50
-                                      ? `${firstMessage.message.slice(
-                                          0,
-                                          50
-                                        )}...`
-                                      : firstMessage.message}
-                                  </span>
-                                  <span
-                                    style={{
-                                      paddingTop: "8px",
-                                      color: "#999",
-                                      fontSize: "0.59rem",
-                                    }}
-                                  >
-                                    {label.toLowerCase() === "today"
-                                      ? formatDistanceToNow(
-                                          new Date(firstMessage.timestamp),
-                                          {
-                                            addSuffix: true,
-                                          }
-                                        )
-                                      : new Date(
-                                          firstMessage.timestamp
-                                        ).toLocaleString()}
-                                  </span>
-                                </Box>
-                              }
-                              primaryTypographyProps={{
-                                variant: "subtitle1",
-                              }}
-                              secondaryTypographyProps={{
-                                variant: "body2",
-                              }}
-                            />
-                            <ListItemSecondaryAction>
-                              <Badge
-                                badgeContent={badgeContent}
-                                color="primary"
-                              />
-                            </ListItemSecondaryAction>
-                          </ListItem>
-                        </React.Fragment>
-                      );
-                    })}
-                  </List>
-                </Paper>
-              </React.Fragment>
-            </Grid>
-            {/* Chats */}
-            <Grid
-              item
-              xs={9}
-              fullWidth
-              //padding="100px"
-              alignItems="center"
-              style={{ maxHeight: "100vh", width: "100%", overflow: "auto" }}
-            >
-              {selectedThread !== null ? (
-                // Render open thread view
-                <Box sx={{ width: "100%" }}>
-                  <Typography
-                    variant="h5"
-                    position="sticky"
-                    gutterBottom
-                    component="nav"
-                    sx={{
-                      p: 2,
-                      pb: 0,
-                      top: 0,
-                    }}
-                  >
-                    {threads[selectedThread][0].recipient === "Me"
-                      ? threads[selectedThread][0].sender
-                      : threads[selectedThread][0].recipient}
-                  </Typography>
-                  <hr />
-                  <Box className="messages">
-                    {threads[selectedThread].map((message, index) => (
-                      <Box
-                        key={index}
-                        className="message"
-                        sx={{
-                          display: "flex",
-                          flexDirection: "column",
-                          alignItems:
-                            message.sender === "Me" ? "flex-end" : "flex-start",
-                          py: 1,
-                          px: 2,
-                          mt: 2,
-                        }}
-                      >
-                        <Box
+                  Messages
+                  <Box sx={{ pt: 2 }}>
+                    <Button variant="contained" startIcon={<ModeRoundedIcon />}>
+                      Start Chat
+                    </Button>
+                  </Box>
+                </Typography>
+              </Box>
+              <Paper square sx={{ pb: "50px" }} position="fixed">
+                <List sx={{ mb: 2 }}>
+                  {threads.map((thread, index) => {
+                    const [firstMessage] = thread;
+                    const label = getThreadLabel(firstMessage.timestamp);
+                    const badgeContent = thread.length;
+                    return (
+                      <React.Fragment key={index}>
+                        <ListSubheader sx={{ bgcolor: "background.paper" }}>
+                          {label}
+                        </ListSubheader>{" "}
+                        <ListItem
+                          button
+                          onClick={() => handleOpenThread(index)}
                           sx={{
-                            display: "flex",
-                            flexDirection:
-                              message.sender === "Me" ? "row-reverse" : "row",
+                            bgcolor: selectedThread === index ? "#1565C0" : "",
                           }}
                         >
                           <ListItemAvatar>
                             <Avatar
-                              alt={message.sender[0].toUpperCase()}
-                              src={message.sender[0].toUpperCase()}
+                              alt={
+                                firstMessage.recipient === "Me"
+                                  ? firstMessage.sender[0].toUpperCase()
+                                  : firstMessage.recipient[0].toUpperCase()
+                              }
+                              src={
+                                firstMessage.recipient === "Me"
+                                  ? firstMessage.sender[0].toUpperCase()
+                                  : firstMessage.recipient[0].toUpperCase()
+                              }
                               sx={{
                                 bgcolor: () => {
                                   const colors = [
+                                    // "#EE2677", // pink
                                     "#C8553D",
                                     "#FF8200",
                                     "#CC59D2",
@@ -431,96 +269,232 @@ export default function App() {
                                   ];
 
                                   const index =
-                                    message.sender[0].charCodeAt(0) %
-                                    colors.length;
+                                    firstMessage.recipient === "Me"
+                                      ? firstMessage.sender[0].charCodeAt(0) %
+                                        colors.length
+                                      : firstMessage.recipient[0].charCodeAt(
+                                          0
+                                        ) % colors.length;
                                   return colors[index];
                                 },
                                 color: "white",
-                                mx: 2,
                               }}
                             />
                           </ListItemAvatar>
-                          <Paper
-                            sx={{
-                              p: 2,
-                              bgcolor:
-                                message.sender === "Me" ? "#F4F2F3" : "#2979ff",
-                              color: "#000000",
-                              borderRadius: "10px",
-                              width: "50%",
+                          <ListItemText
+                            primary={
+                              firstMessage.recipient === "Me"
+                                ? firstMessage.sender
+                                : firstMessage.recipient
+                            }
+                            secondary={
+                              <Box
+                                sx={{
+                                  display: "flex",
+                                  flexDirection: "column",
+                                }}
+                              >
+                                <span>
+                                  {firstMessage.message.length > 50
+                                    ? `${firstMessage.message.slice(0, 50)}...`
+                                    : firstMessage.message}
+                                </span>
+                                <span
+                                  style={{
+                                    paddingTop: "8px",
+                                    color: "#999",
+                                    fontSize: "0.59rem",
+                                  }}
+                                >
+                                  {label.toLowerCase() === "today"
+                                    ? formatDistanceToNow(
+                                        new Date(firstMessage.timestamp),
+                                        {
+                                          addSuffix: true,
+                                        }
+                                      )
+                                    : new Date(
+                                        firstMessage.timestamp
+                                      ).toLocaleString()}
+                                </span>
+                              </Box>
+                            }
+                            primaryTypographyProps={{
+                              variant: "subtitle1",
                             }}
-                          >
-                            {message.message}
-                          </Paper>
-                        </Box>
-
-                        <Typography
-                          variant="body2"
-                          color="textSecondary"
-                          sx={{
-                            alignSelf:
-                              message.sender === "Me"
-                                ? "flex-end"
-                                : "flex-start",
-                            mt: 1,
-                            mx: 10,
-                          }}
-                        >
-                          {new Date(message.timestamp).toLocaleString()}
-                        </Typography>
-                      </Box>
-                    ))}
-                  </Box>
-
-                  <Grid
-                    item
-                    xs={12}
-                    style={{ position: "fixed", bottom: 0, zIndex: 2 }}
-                    width="70%"
-                    mb={5}
-                  >
-                    {/* Send Message Input */}
-                    <Box display="flex" alignItems="center" padding="8px">
-                      <TextField
-                        placeholder="Type your message..."
-                        style={{
-                          borderBottom: "1px solid #ccc",
-                        }}
-                        fullWidth
-                        multiline
-                        value={inputMessage}
-                        onChange={(e) => setInputMessage(e.target.value)}
-                        onKeyDown={handleKeyDown}
-                      />
-                      <IconButton
-                        color="primary"
-                        aria-label="send message"
-                        onClick={handleSendMessage}
-                      >
-                        <SendIcon />
-                      </IconButton>
-                    </Box>
-                  </Grid>
-                </Box>
-              ) : (
-                // Render no thread selected view
-                <Box
+                            secondaryTypographyProps={{
+                              variant: "body2",
+                            }}
+                          />
+                          <ListItemSecondaryAction>
+                            <Badge
+                              badgeContent={badgeContent}
+                              color="primary"
+                            />
+                          </ListItemSecondaryAction>
+                        </ListItem>
+                      </React.Fragment>
+                    );
+                  })}
+                </List>
+              </Paper>
+            </React.Fragment>
+          </Grid>
+          {/* Chats */}
+          <Grid
+            item
+            xs={9}
+            fullWidth
+            //padding="100px"
+            alignItems="center"
+            style={{ maxHeight: "100vh", width: "100%", overflow: "auto" }}
+          >
+            {selectedThread !== null ? (
+              // Render open thread view
+              <Box sx={{ width: "100%" }}>
+                <Typography
+                  variant="h5"
+                  position="sticky"
+                  gutterBottom
+                  component="nav"
                   sx={{
-                    height: "100%",
-                    display: "flex",
-                    alignItems: "center",
-                    justifyContent: "center",
+                    p: 2,
+                    pb: 0,
+                    top: 0,
                   }}
                 >
-                  <Typography variant="h6" color="textSecondary">
-                    Select a thread to view messages
-                  </Typography>
+                  {threads[selectedThread][0].recipient === "Me"
+                    ? threads[selectedThread][0].sender
+                    : threads[selectedThread][0].recipient}
+                </Typography>
+                <hr />
+                <Box className="messages">
+                  {threads[selectedThread].map((message, index) => (
+                    <Box
+                      key={index}
+                      className="message"
+                      sx={{
+                        display: "flex",
+                        flexDirection: "column",
+                        alignItems:
+                          message.sender === "Me" ? "flex-end" : "flex-start",
+                        py: 1,
+                        px: 2,
+                        mt: 2,
+                      }}
+                    >
+                      <Box
+                        sx={{
+                          display: "flex",
+                          flexDirection:
+                            message.sender === "Me" ? "row-reverse" : "row",
+                        }}
+                      >
+                        <ListItemAvatar>
+                          <Avatar
+                            alt={message.sender[0].toUpperCase()}
+                            src={message.sender[0].toUpperCase()}
+                            sx={{
+                              bgcolor: () => {
+                                const colors = [
+                                  "#C8553D",
+                                  "#FF8200",
+                                  "#CC59D2",
+                                  "#FDE12D",
+                                  "#F487B6",
+                                  "#CB807D",
+                                  "#276FBF",
+                                  "#20A39E",
+                                ];
+
+                                const index =
+                                  message.sender[0].charCodeAt(0) %
+                                  colors.length;
+                                return colors[index];
+                              },
+                              color: "white",
+                              mx: 2,
+                            }}
+                          />
+                        </ListItemAvatar>
+                        <Paper
+                          sx={{
+                            p: 2,
+                            bgcolor:
+                              message.sender === "Me" ? "#F4F2F3" : "#2979ff",
+                            color: "#000000",
+                            borderRadius: "10px",
+                            width: "50%",
+                          }}
+                        >
+                          {message.message}
+                        </Paper>
+                      </Box>
+
+                      <Typography
+                        variant="body2"
+                        color="textSecondary"
+                        sx={{
+                          alignSelf:
+                            message.sender === "Me" ? "flex-end" : "flex-start",
+                          mt: 1,
+                          mx: 10,
+                        }}
+                      >
+                        {new Date(message.timestamp).toLocaleString()}
+                      </Typography>
+                    </Box>
+                  ))}
                 </Box>
-              )}
-            </Grid>
+
+                <Grid
+                  item
+                  xs={12}
+                  style={{ position: "fixed", bottom: 0, zIndex: 2 }}
+                  width="70%"
+                  mb={5}
+                >
+                  {/* Send Message Input */}
+                  <Box display="flex" alignItems="center" padding="8px">
+                    <TextField
+                      placeholder="Type your message..."
+                      style={{
+                        borderBottom: "1px solid #ccc",
+                      }}
+                      fullWidth
+                      multiline
+                      value={inputMessage}
+                      onChange={(e) => setInputMessage(e.target.value)}
+                      onKeyDown={handleKeyDown}
+                    />
+                    <IconButton
+                      color="primary"
+                      aria-label="send message"
+                      onClick={handleSendMessage}
+                    >
+                      <SendIcon />
+                    </IconButton>
+                  </Box>
+                </Grid>
+              </Box>
+            ) : (
+              // Render no thread selected view
+              <Box
+                sx={{
+                  height: "100%",
+                  display: "flex",
+                  alignItems: "center",
+                  justifyContent: "center",
+                }}
+              >
+                <Typography variant="h6" color="textSecondary">
+                  Select a thread to view messages
+                </Typography>
+              </Box>
+            )}
           </Grid>
-        </Box>
-      </ThemeProvider>
+        </Grid>
+      </Box>
     </div>
   );
 }
