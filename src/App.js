@@ -15,6 +15,9 @@ import {
   ListItemSecondaryAction,
   Badge,
   Button,
+  AppBar,
+  InputBase,
+  Divider,
 } from "@mui/material";
 import SendIcon from "@mui/icons-material/Send";
 import ModeRoundedIcon from "@mui/icons-material/ModeRounded";
@@ -351,14 +354,11 @@ export default function App() {
           >
             {selectedThread !== null ? (
               // Render open thread view
-              <Box sx={{ width: "100%" }}>
-                <Typography
-                  variant="h5"
+              <Box>
+                <AppBar
                   position="sticky"
-                  gutterBottom
-                  component="nav"
                   sx={{
-                    p: 2,
+                    p: 1,
                     pb: 0,
                     top: 0,
                   }}
@@ -366,13 +366,12 @@ export default function App() {
                   {threads[selectedThread][0].recipient === "Me"
                     ? threads[selectedThread][0].sender
                     : threads[selectedThread][0].recipient}
-                </Typography>
-                <hr />
-                <Box className="messages">
+                </AppBar>
+
+                <Box>
                   {threads[selectedThread].map((message, index) => (
                     <Box
                       key={index}
-                      className="message"
                       sx={{
                         display: "flex",
                         flexDirection: "column",
@@ -448,33 +447,48 @@ export default function App() {
                 </Box>
 
                 <Grid
-                  item
-                  xs={12}
-                  style={{ position: "fixed", bottom: 0, zIndex: 2 }}
-                  width="70%"
-                  mb={5}
+                  sx={{
+                    position: "fixed",
+                    bottom: 0,
+                    width: "70%",
+                    // bgcolor: "background.paper",
+                    //boxShadow: 24,
+                    // backgroundBlendMode: "darken",
+                  }}
                 >
                   {/* Send Message Input */}
-                  <Box display="flex" alignItems="center" padding="8px">
-                    <TextField
+                  <Paper
+                    component="form"
+                    sx={{
+                      p: "2px 4px",
+                      display: "flex",
+                      alignItems: "center",
+                      boxShadow: 24,
+                      marginBottom: 5,
+                    }}
+                  >
+                    <InputBase
+                      size="small"
+                      variant="filled"
                       placeholder="Type your message..."
-                      style={{
-                        borderBottom: "1px solid #ccc",
-                      }}
                       fullWidth
                       multiline
                       value={inputMessage}
                       onChange={(e) => setInputMessage(e.target.value)}
                       onKeyDown={handleKeyDown}
                     />
+                    <Divider
+                      sx={{ height: 28, m: 0.5 }}
+                      orientation="vertical"
+                    />
                     <IconButton
-                      color="primary"
+                      type="button"
                       aria-label="send message"
                       onClick={handleSendMessage}
                     >
                       <SendIcon />
                     </IconButton>
-                  </Box>
+                  </Paper>
                 </Grid>
               </Box>
             ) : (

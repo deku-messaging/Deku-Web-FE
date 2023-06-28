@@ -29,8 +29,8 @@ export default function Index() {
         <CssBaseline />
         <BrowserRouter>
           <Routes>
-            <Route path="/" element={<Auth />}>
-              <Route index element={<App />} />
+            <Route path="/" element={<App />}>
+              <Route index element={<Auth />} />
             </Route>
           </Routes>
         </BrowserRouter>
