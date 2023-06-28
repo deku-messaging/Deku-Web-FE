@@ -215,7 +215,6 @@ export default function App() {
                 <Box
                   bgcolor="background.paper"
                   position="sticky"
-                  mponent="nav"
                   sx={{
                     top: 0,
                     zIndex: 1,

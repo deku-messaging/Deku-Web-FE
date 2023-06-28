@@ -8,3 +8,12 @@
   display: flex;
   margin-bottom: 16px;
 }
+
+.footer {
+  text-decoration: none;
+  color: rgb(159, 158, 158);
+}
+
+.footer:hover {
+  color: #9BBFF2;
+}
