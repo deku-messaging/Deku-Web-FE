@@ -10,7 +10,6 @@ import {
   ListItemAvatar,
   Avatar,
   ListItemText,
-  TextField,
   IconButton,
   ListItemSecondaryAction,
   Badge,
@@ -23,6 +22,7 @@ import SendIcon from "@mui/icons-material/Send";
 import ModeRoundedIcon from "@mui/icons-material/ModeRounded";
 import { formatDistanceToNow } from "date-fns";
 import CssBaseline from "@mui/material/CssBaseline";
+import Chat from "./sync.svg";
 
 const messages = [
   {
@@ -348,7 +348,6 @@ export default function App() {
             item
             xs={9}
             fullWidth
-            //padding="100px"
             alignItems="center"
             style={{ maxHeight: "100vh", width: "100%", overflow: "auto" }}
           >
@@ -450,10 +449,8 @@ export default function App() {
                   sx={{
                     position: "fixed",
                     bottom: 0,
-                    width: "70%",
-                    // bgcolor: "background.paper",
-                    //boxShadow: 24,
-                    // backgroundBlendMode: "darken",
+                    width: "100%",
+                    bgcolor: "background.paper",
                   }}
                 >
                   {/* Send Message Input */}
@@ -464,6 +461,7 @@ export default function App() {
                       display: "flex",
                       alignItems: "center",
                       boxShadow: 24,
+                      width: "70%",
                       marginBottom: 5,
                     }}
                   >
@@ -499,10 +497,20 @@ export default function App() {
                   display: "flex",
                   alignItems: "center",
                   justifyContent: "center",
+                  flexDirection: "column",
                 }}
               >
-                <Typography variant="h6" color="textSecondary">
-                  Select a thread to view messages
+                <img src={Chat} alt="Chat svg" width={200} />
+                <Typography
+                  variant="h6"
+                  color="textSecondary"
+                  paddingTop="15px"
+                >
+                  Keep your phone online
+                </Typography>
+                <Typography variant="body2" color="textSecondary">
+                  Your phone is paired so you can use this device to stay
+                  connected
                 </Typography>
               </Box>
             )}
