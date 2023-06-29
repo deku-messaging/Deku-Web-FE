@@ -242,7 +242,7 @@ export default function App() {
                           button
                           onClick={() => handleOpenThread(index)}
                           sx={{
-                            bgcolor: selectedThread === index ? "#1565C0" : "",
+                            bgcolor: selectedThread === index ? "#1976D2" : "",
                           }}
                         >
                           <ListItemAvatar>
@@ -336,6 +336,7 @@ export default function App() {
                             />
                           </ListItemSecondaryAction>
                         </ListItem>
+                        <Divider />
                       </React.Fragment>
                     );
                   })}
