@@ -17,12 +17,62 @@ import {
   AppBar,
   InputBase,
   Divider,
+  Toolbar,
+  MenuItem,
+  Menu,
 } from "@mui/material";
 import SendIcon from "@mui/icons-material/Send";
 import ModeRoundedIcon from "@mui/icons-material/ModeRounded";
 import { formatDistanceToNow } from "date-fns";
 import CssBaseline from "@mui/material/CssBaseline";
+import { styled, alpha } from "@mui/material/styles";
 import Chat from "./sync.svg";
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import { faBell, faEllipsisVertical } from "@fortawesome/free-solid-svg-icons";
+import { faComment } from "@fortawesome/free-regular-svg-icons";
+
+const StyledMenu = styled((props) => (
+  <Menu
+    elevation={0}
+    anchorOrigin={{
+      vertical: "bottom",
+      horizontal: "right",
+    }}
+    transformOrigin={{
+      vertical: "top",
+      horizontal: "right",
+    }}
+    {...props}
+  />
+))(({ theme }) => ({
+  "& .MuiPaper-root": {
+    borderRadius: 6,
+    marginTop: theme.spacing(1),
+    minWidth: 180,
+    color:
+      theme.palette.mode === "light"
+        ? "rgb(55, 65, 81)"
+        : theme.palette.grey[300],
+    boxShadow:
+      "rgb(255, 255, 255) 0px 0px 0px 0px, rgba(0, 0, 0, 0.05) 0px 0px 0px 1px, rgba(0, 0, 0, 0.1) 0px 10px 15px -3px, rgba(0, 0, 0, 0.05) 0px 4px 6px -2px",
+    "& .MuiMenu-list": {
+      padding: "4px 0",
+    },
+    "& .MuiMenuItem-root": {
+      "& .MuiSvgIcon-root": {
+        fontSize: 18,
+        color: theme.palette.text.secondary,
+        marginRight: theme.spacing(1.5),
+      },
+      "&:active": {
+        backgroundColor: alpha(
+          theme.palette.primary.main,
+          theme.palette.action.selectedOpacity
+        ),
+      },
+    },
+  },
+}));
 
 const messages = [
   {
@@ -191,43 +241,97 @@ export default function App() {
     }
   };
 
+  const [anchorEl, setAnchorEl] = React.useState(null);
+  const open = Boolean(anchorEl);
+  const handleClick = (event) => {
+    setAnchorEl(event.currentTarget);
+  };
+  const handleClose = () => {
+    setAnchorEl(null);
+  };
+
   return (
     <div>
       <Box sx={{ flexGrow: 1 }}>
-        <Grid container spacing={2}>
+        <Grid container>
           {/* Threads */}
           <Grid item xs={3} style={{ maxHeight: "100vh", overflow: "auto" }}>
             <React.Fragment>
               <CssBaseline />
-              <Box
+              <AppBar
                 bgcolor="background.paper"
+                component="nav"
                 position="sticky"
+                sx={{ height: 42 }}
+              >
+                <Toolbar s>
+                  <Typography
+                    sx={{
+                      p: 1,
+                      flexGrow: 1,
+                      pl: 2,
+                      pb: 3,
+                    }}
+                  >
+                    Messages
+                  </Typography>
+                  <FontAwesomeIcon
+                    style={{
+                      paddingBottom: "12px",
+                      paddingLeft: "43px",
+                    }}
+                    icon={faEllipsisVertical}
+                    size="sm"
+                    id="demo-customized-button"
+                    aria-controls={open ? "demo-customized-menu" : undefined}
+                    aria-haspopup="true"
+                    disableElevation
+                    aria-expanded={open ? "true" : undefined}
+                    onClick={handleClick}
+                  />
+                </Toolbar>
+              </AppBar>
+              <Box
+                position="fixed"
+                top={0}
+                zIndex={999}
+                left={0}
+                right={1000}
                 sx={{
-                  top: 0,
-                  zIndex: 1,
+                  backgroundColor: "background.paper",
+                  mt: 5,
                 }}
               >
-                <Typography
-                  variant="h5"
-                  position="sticky"
-                  gutterBottom
-                  component="nav"
-                  sx={{
-                    p: 2,
-                    pb: 0,
-                    top: 0,
-                    zIndex: 1,
-                  }}
-                >
-                  Messages
-                  <Box sx={{ pt: 2 }}>
-                    <Button variant="contained" startIcon={<ModeRoundedIcon />}>
-                      Start Chat
-                    </Button>
-                  </Box>
-                </Typography>
+                <Toolbar sx={{ width: "100%" }}>
+                  <Button
+                    variant="contained"
+                    size="small"
+                    sx={{ borderRadius: 5 }}
+                  >
+                    <FontAwesomeIcon
+                      style={{ marginRight: "10px" }}
+                      icon={faComment}
+                      flip="horizontal"
+                    />
+                    Start Chat
+                  </Button>
+                </Toolbar>
               </Box>
-              <Paper square sx={{ pb: "50px" }} position="fixed">
+              {/* New Chat Button */}
+              {/* <Box
+                position="sticky"
+                sx={{
+                  p: 1,
+                  pt: 2,
+                  top: 0,
+                }}
+              >
+                <Button variant="contained" startIcon={<ModeRoundedIcon />}>
+                  Start Chat
+                </Button>
+              </Box> */}
+              {/*  */}
+              <Paper square sx={{ pb: "50px", mt: 10 }}>
                 <List sx={{ mb: 2 }}>
                   {threads.map((thread, index) => {
                     const [firstMessage] = thread;
@@ -345,27 +449,71 @@ export default function App() {
             </React.Fragment>
           </Grid>
           {/* Chats */}
+          <Divider flexItem orientation="vertical" sx={{ mr: "-1px" }} />
           <Grid
             item
             xs={9}
             fullWidth
             alignItems="center"
-            style={{ maxHeight: "100vh", width: "100%", overflow: "auto" }}
+            sx={{
+              maxHeight: "100vh",
+              width: "100%",
+              overflow: "auto",
+            }}
           >
             {selectedThread !== null ? (
               // Render open thread view
               <Box>
-                <AppBar
-                  position="sticky"
-                  sx={{
-                    p: 1,
-                    pb: 0,
-                    top: 0,
-                  }}
-                >
-                  {threads[selectedThread][0].recipient === "Me"
-                    ? threads[selectedThread][0].sender
-                    : threads[selectedThread][0].recipient}
+                <AppBar component="nav" position="sticky" sx={{ height: 42 }}>
+                  <Toolbar>
+                    <Typography sx={{ flexGrow: 1, pb: 2 }}>
+                      {threads[selectedThread][0].recipient === "Me"
+                        ? threads[selectedThread][0].sender
+                        : threads[selectedThread][0].recipient}
+                    </Typography>
+
+                    <FontAwesomeIcon
+                      style={{ paddingBottom: "12px" }}
+                      icon={faBell}
+                      size="sm"
+                    />
+
+                    <FontAwesomeIcon
+                      style={{
+                        paddingBottom: "12px",
+                        paddingLeft: "43px",
+                      }}
+                      icon={faEllipsisVertical}
+                      size="sm"
+                      id="demo-customized-button"
+                      aria-controls={open ? "demo-customized-menu" : undefined}
+                      aria-haspopup="true"
+                      disableElevation
+                      aria-expanded={open ? "true" : undefined}
+                      onClick={handleClick}
+                    />
+                    <StyledMenu
+                      id="demo-customized-menu"
+                      MenuListProps={{
+                        "aria-labelledby": "demo-customized-button",
+                      }}
+                      anchorEl={anchorEl}
+                      open={open}
+                      onClose={handleClose}
+                    >
+                      <MenuItem onClick={handleClose} disableRipple>
+                        Contact info
+                      </MenuItem>
+                      <Divider sx={{ my: 0.5 }} />
+                      <MenuItem onClick={handleClose} disableRipple>
+                        Delete chat
+                      </MenuItem>
+                      <Divider sx={{ my: 0.5 }} />
+                      <MenuItem onClick={handleClose} disableRipple>
+                        Block
+                      </MenuItem>
+                    </StyledMenu>
+                  </Toolbar>
                 </AppBar>
 
                 <Box>
@@ -462,8 +610,9 @@ export default function App() {
                       display: "flex",
                       alignItems: "center",
                       boxShadow: 24,
-                      width: "70%",
+                      width: "60%",
                       marginBottom: 5,
+                      marginLeft: 7,
                     }}
                   >
                     <InputBase
