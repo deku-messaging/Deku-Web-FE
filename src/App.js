@@ -255,7 +255,14 @@ export default function App() {
       <Box sx={{ flexGrow: 1 }}>
         <Grid container>
           {/* Threads */}
-          <Grid item xs={3} style={{ maxHeight: "100vh", overflow: "auto" }}>
+          <Grid
+            item
+            xs={3}
+            sx={{
+              maxHeight: "100vh",
+              overflow: "auto",
+            }}
+          >
             <React.Fragment>
               <CssBaseline />
               <AppBar
@@ -264,7 +271,7 @@ export default function App() {
                 position="sticky"
                 sx={{ height: 42 }}
               >
-                <Toolbar s>
+                <Toolbar>
                   <Typography
                     sx={{
                       p: 1,
@@ -291,18 +298,14 @@ export default function App() {
                   />
                 </Toolbar>
               </AppBar>
-              <Box
-                position="fixed"
-                top={0}
-                zIndex={999}
-                left={0}
-                right={1000}
+              <AppBar
+                component="nav"
+                position="sticky"
                 sx={{
                   backgroundColor: "background.paper",
-                  mt: 5,
                 }}
               >
-                <Toolbar sx={{ width: "100%" }}>
+                <Toolbar>
                   <Button
                     variant="contained"
                     size="small"
@@ -316,22 +319,9 @@ export default function App() {
                     Start Chat
                   </Button>
                 </Toolbar>
-              </Box>
-              {/* New Chat Button */}
-              {/* <Box
-                position="sticky"
-                sx={{
-                  p: 1,
-                  pt: 2,
-                  top: 0,
-                }}
-              >
-                <Button variant="contained" startIcon={<ModeRoundedIcon />}>
-                  Start Chat
-                </Button>
-              </Box> */}
-              {/*  */}
-              <Paper square sx={{ pb: "50px", mt: 10 }}>
+              </AppBar>
+
+              <Paper square sx={{ pb: "50px" }}>
                 <List sx={{ mb: 2 }}>
                   {threads.map((thread, index) => {
                     const [firstMessage] = thread;
