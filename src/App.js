@@ -82,6 +82,7 @@ const messages = [
       "Do you have a suggestion for a good present for John on his work anniversary? I am really confused and would love your thoughts on it.",
     avatar: "",
     timestamp: "2023-02-12T09:30:00Z",
+    status: "read",
   },
   {
     id: 2,
@@ -91,6 +92,7 @@ const messages = [
       "I need your help with finding a great gift for John's work anniversary. Any ideas? I'm quite unsure about what to get.",
     avatar: "",
     timestamp: "2023-03-05T14:45:00Z",
+    status: "unread",
   },
   {
     id: 3,
@@ -100,6 +102,7 @@ const messages = [
       "Hey there! Can you assist me in selecting a suitable present for John on his work anniversary? I'm really confused and could use some suggestions.",
     avatar: "",
     timestamp: "2023-04-18T10:20:00Z",
+    status: "read",
   },
 
   {
@@ -110,6 +113,7 @@ const messages = [
       "Could you please recommend a good gift for John on his work anniversary? I'm feeling quite indecisive and would appreciate your input.",
     avatar: "",
     timestamp: "2023-01-23T16:10:00Z",
+    status: "read",
   },
 
   {
@@ -120,6 +124,7 @@ const messages = [
       "Could you please recommend a good gift for John on his work anniversary? I'm feeling quite indecisive and would appreciate your input.",
     avatar: "",
     timestamp: "2023-01-23T16:10:00Z",
+    status: "read",
   },
 
   {
@@ -129,6 +134,7 @@ const messages = [
     message: "Hey there.",
     avatar: "",
     timestamp: "2023-07-07T10:10:00Z",
+    status: "unread",
   },
 
   {
@@ -138,6 +144,7 @@ const messages = [
     message: "How about a tee which says 'I'm a douche bag",
     avatar: "",
     timestamp: "2023-01-23T16:10:00Z",
+    status: "read",
   },
 ];
 
@@ -275,12 +282,7 @@ export default function App() {
           >
             <React.Fragment>
               <CssBaseline />
-              <AppBar
-                bgcolor="background.paper"
-                component="nav"
-                position="sticky"
-                sx={{ height: 42 }}
-              >
+              <AppBar component="nav" position="sticky" sx={{ height: 42 }}>
                 <Toolbar>
                   <Typography
                     sx={{
@@ -308,18 +310,12 @@ export default function App() {
                   />
                 </Toolbar>
               </AppBar>
-              <AppBar
-                component="nav"
-                position="sticky"
-                sx={{
-                  backgroundColor: "background.paper",
-                }}
-              >
-                <Toolbar>
+              <AppBar component="nav" position="sticky">
+                <Toolbar sx={{ bgcolor: "background.default" }}>
                   <Button
                     variant="contained"
                     size="small"
-                    sx={{ borderRadius: 5 }}
+                    sx={{ borderRadius: 5, bgcolor: "info.main" }}
                   >
                     <FontAwesomeIcon
                       style={{ marginRight: "10px" }}
@@ -346,7 +342,8 @@ export default function App() {
                           component="body"
                           onClick={() => handleOpenThread(index)}
                           sx={{
-                            bgcolor: selectedThread === index ? "#303E4A" : "",
+                            bgcolor:
+                              selectedThread === index ? "action.selected" : "",
                           }}
                         >
                           <ListItemAvatar>
@@ -379,6 +376,7 @@ export default function App() {
                                     "#CB807D",
                                     "#276FBF",
                                     "#20A39E",
+                                    "#DA4167",
                                   ];
 
                                   const index =
@@ -444,12 +442,14 @@ export default function App() {
                               variant: "body2",
                             }}
                           />
-                          <ListItemSecondaryAction>
-                            <Badge
-                              badgeContent={badgeContent}
-                              color="primary"
-                            />
-                          </ListItemSecondaryAction>
+                          {firstMessage.status === "unread" && ( // Show the badge only when the status is "unread"
+                            <ListItemSecondaryAction>
+                              <Badge
+                                badgeContent={badgeContent}
+                                color="primary"
+                              />
+                            </ListItemSecondaryAction>
+                          )}
                         </ListItem>
                         <Divider />
                       </React.Fragment>
@@ -527,10 +527,10 @@ export default function App() {
                       </MenuItem>
                       <Divider sx={{ my: 0.5 }} />
                       <MenuItem
-                        onClick={() => handleClose("block")}
+                        onClick={() => handleClose("logout")}
                         disableRipple
                       >
-                        Block
+                        Log Out
                       </MenuItem>
                     </StyledMenu>
                   </Toolbar>
@@ -588,8 +588,8 @@ export default function App() {
                           sx={{
                             p: 2,
                             bgcolor:
-                              message.sender === "Me" ? "#F4F2F3" : "#2979ff",
-                            color: "#000000",
+                              message.sender === "Me" ? "#F4F2F3" : "info.main",
+                            color: "#000",
                             borderRadius: "10px",
                             width: "50%",
                           }}
