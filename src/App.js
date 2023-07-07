@@ -1,4 +1,4 @@
-import React, { useState, useCallback } from "react";
+import React, { useState, useCallback, useEffect } from "react";
 import {
   Box,
   Grid,
@@ -29,6 +29,12 @@ import Chat from "./sync.svg";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faBell, faEllipsisVertical } from "@fortawesome/free-solid-svg-icons";
 import { faComment } from "@fortawesome/free-regular-svg-icons";
+import { Howl } from "howler";
+import tone from "./iphoneding.mp3";
+
+const notificationSound = new Howl({
+  src: tone,
+});
 
 const StyledMenu = styled((props) => (
   <Menu
@@ -139,6 +145,16 @@ const messages = [
 
   {
     id: 8,
+    sender: "Me",
+    recipient: "+237650343378",
+    message: "Hey love.",
+    avatar: "",
+    timestamp: "2023-07-07T15:10:00Z",
+    status: "unread",
+  },
+
+  {
+    id: 9,
     sender: "Sophia",
     recipient: "Me",
     message: "How about a tee which says 'I'm a douche bag",
@@ -237,6 +253,8 @@ export default function App() {
     });
     console.log("Sending message:", inputMessage);
     setInputMessage("");
+
+    // Play the push notification sound
   };
 
   const handleKeyDown = (e) => {
@@ -266,6 +284,20 @@ export default function App() {
       setSelectedThread(null); // Deselect the thread after deletion
     }
   }, [selectedThread]);
+
+  useEffect(() => {
+    if (selectedThread !== null) {
+      // Check if the selected thread has any unread messages
+      const hasUnreadMessages = threads[selectedThread].some(
+        (message) => message.status === "unread"
+      );
+
+      if (hasUnreadMessages) {
+        // Play the notification sound
+        notificationSound.play();
+      }
+    }
+  }, [selectedThread, threads]);
 
   return (
     <div>
