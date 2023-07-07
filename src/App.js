@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useCallback } from "react";
 import {
   Box,
   Grid,
@@ -22,7 +22,6 @@ import {
   Menu,
 } from "@mui/material";
 import SendIcon from "@mui/icons-material/Send";
-import ModeRoundedIcon from "@mui/icons-material/ModeRounded";
 import { formatDistanceToNow } from "date-fns";
 import CssBaseline from "@mui/material/CssBaseline";
 import { styled, alpha } from "@mui/material/styles";
@@ -96,7 +95,7 @@ const messages = [
   {
     id: 3,
     sender: "Me",
-    recipient: "Ethan",
+    recipient: "+237650393379",
     message:
       "Hey there! Can you assist me in selecting a suitable present for John on his work anniversary? I'm really confused and could use some suggestions.",
     avatar: "",
@@ -125,12 +124,11 @@ const messages = [
 
   {
     id: 7,
-    sender: "Vanessa",
+    sender: "+237650343378",
     recipient: "Me",
-    message:
-      "Could you please recommend a good gift for John on his work anniversary? I'm feeling quite indecisive and would appreciate your input.",
+    message: "Hey there.",
     avatar: "",
-    timestamp: "2023-01-23T16:10:00Z",
+    timestamp: "2023-07-07T10:10:00Z",
   },
 
   {
@@ -246,9 +244,21 @@ export default function App() {
   const handleClick = (event) => {
     setAnchorEl(event.currentTarget);
   };
-  const handleClose = () => {
+  const handleClose = (menuItem) => {
     setAnchorEl(null);
+
+    if (menuItem === "delete") {
+      handleDeleteChat();
+    }
   };
+
+  const handleDeleteChat = useCallback(() => {
+    if (selectedThread !== null) {
+      // Remove the current thread from the messages array
+      messages.splice(selectedThread, 1);
+      setSelectedThread(null); // Deselect the thread after deletion
+    }
+  }, [selectedThread]);
 
   return (
     <div>
@@ -333,10 +343,10 @@ export default function App() {
                           {label}
                         </ListSubheader>{" "}
                         <ListItem
-                          button
+                          component="body"
                           onClick={() => handleOpenThread(index)}
                           sx={{
-                            bgcolor: selectedThread === index ? "#1976D2" : "",
+                            bgcolor: selectedThread === index ? "#303E4A" : "",
                           }}
                         >
                           <ListItemAvatar>
@@ -344,11 +354,17 @@ export default function App() {
                               alt={
                                 firstMessage.recipient === "Me"
                                   ? firstMessage.sender[0].toUpperCase()
+                                  : firstMessage.recipient.startsWith("+") ||
+                                    firstMessage.sender.startsWith("+")
+                                  ? "+"
                                   : firstMessage.recipient[0].toUpperCase()
                               }
                               src={
                                 firstMessage.recipient === "Me"
                                   ? firstMessage.sender[0].toUpperCase()
+                                  : firstMessage.recipient.startsWith("+") ||
+                                    firstMessage.sender.startsWith("+")
+                                  ? null // Set to null or provide the URL for the default avatar image
                                   : firstMessage.recipient[0].toUpperCase()
                               }
                               sx={{
@@ -369,6 +385,10 @@ export default function App() {
                                     firstMessage.recipient === "Me"
                                       ? firstMessage.sender[0].charCodeAt(0) %
                                         colors.length
+                                      : firstMessage.recipient.startsWith(
+                                          "+"
+                                        ) || firstMessage.sender.startsWith("+")
+                                      ? 0 // Set the index to the desired color for the default avatar
                                       : firstMessage.recipient[0].charCodeAt(
                                           0
                                         ) % colors.length;
@@ -378,6 +398,7 @@ export default function App() {
                               }}
                             />
                           </ListItemAvatar>
+
                           <ListItemText
                             primary={
                               firstMessage.recipient === "Me"
@@ -491,15 +512,24 @@ export default function App() {
                       open={open}
                       onClose={handleClose}
                     >
-                      <MenuItem onClick={handleClose} disableRipple>
+                      <MenuItem
+                        onClick={() => handleClose("contact")}
+                        disableRipple
+                      >
                         Contact info
                       </MenuItem>
                       <Divider sx={{ my: 0.5 }} />
-                      <MenuItem onClick={handleClose} disableRipple>
+                      <MenuItem
+                        onClick={() => handleClose("delete")}
+                        disableRipple
+                      >
                         Delete chat
                       </MenuItem>
                       <Divider sx={{ my: 0.5 }} />
-                      <MenuItem onClick={handleClose} disableRipple>
+                      <MenuItem
+                        onClick={() => handleClose("block")}
+                        disableRipple
+                      >
                         Block
                       </MenuItem>
                     </StyledMenu>
