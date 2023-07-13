@@ -20,6 +20,7 @@ import {
   Toolbar,
   MenuItem,
   Menu,
+  Snackbar,
 } from "@mui/material";
 import SendIcon from "@mui/icons-material/Send";
 import { formatDistanceToNow } from "date-fns";
@@ -27,7 +28,7 @@ import CssBaseline from "@mui/material/CssBaseline";
 import { styled, alpha } from "@mui/material/styles";
 import Chat from "./sync.svg";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { faBell, faEllipsisVertical } from "@fortawesome/free-solid-svg-icons";
+import { faEllipsisVertical } from "@fortawesome/free-solid-svg-icons";
 import { faComment } from "@fortawesome/free-regular-svg-icons";
 import { Howl } from "howler";
 import tone from "./iphoneding.mp3";
@@ -232,29 +233,57 @@ const getThreadLabel = (timestamp) => {
 export default function App() {
   const [selectedThread, setSelectedThread] = useState(null);
   const [inputMessage, setInputMessage] = useState("");
+  const [snackbarOpen, setSnackbarOpen] = useState(false); // Added state for snackbar
+  const [threadId, setThreadId] = useState(""); // Add threadId state
 
   const threads = sortThreads(groupThreads(messages));
 
   const handleOpenThread = (threadIndex) => {
     setSelectedThread(threadIndex);
+    const selectedThread = threads[threadIndex];
+    const [firstMessage] = selectedThread;
+    const threadId = `${firstMessage.sender}-${firstMessage.recipient}`;
+    setThreadId(threadId); // Set the threadId
   };
 
   const handleSendMessage = () => {
-    messages.push({
-      id: messages.length + 1,
-      sender: "Me",
-      recipient:
-        messages[selectedThread].recipient === "Me"
-          ? messages[selectedThread].sender
-          : messages[selectedThread].recipient,
-      message: inputMessage,
-      avatar: "",
-      timestamp: new Date(),
-    });
-    console.log("Sending message:", inputMessage);
-    setInputMessage("");
+    if (threadId !== "") {
+      // Use the threadId instead of selectedThread
+      const newMessage = {
+        id: messages.length + 1,
+        sender: "Me",
+        recipient: "", // Set the recipient to an empty string
+        message: inputMessage,
+        avatar: "",
+        timestamp: new Date().toISOString(),
+        status: "unread",
+      };
 
-    // Play the push notification sound
+      // Update the recipient based on the threadId
+      const [sender, recipient] = threadId.split("-");
+      newMessage.recipient = sender === "Me" ? recipient : sender;
+
+      messages.push(newMessage);
+
+      // Update threads array
+      const updatedThreads = groupThreads(messages);
+      const sortedThreads = sortThreads(updatedThreads);
+
+      // Find the index of the selected thread in the updated threads array
+      const updatedSelectedThread = sortedThreads.findIndex((thread) =>
+        thread.some((message) => {
+          const threadId = `${message.sender}-${message.recipient}`;
+          return threadId === threadId;
+        })
+      );
+
+      setSelectedThread(updatedSelectedThread);
+      console.log("Sending message:", inputMessage);
+      setInputMessage("");
+
+      // Play the push notification sound
+      notificationSound.play();
+    }
   };
 
   const handleKeyDown = (e) => {
@@ -278,12 +307,14 @@ export default function App() {
   };
 
   const handleDeleteChat = useCallback(() => {
-    if (selectedThread !== null) {
-      // Remove the current thread from the messages array
+    if (threadId !== "") {
+      // Use the threadId instead of selectedThread
       messages.splice(selectedThread, 1);
-      setSelectedThread(null); // Deselect the thread after deletion
+      setSelectedThread(null);
+      setThreadId(""); // Clear the threadId
+      setSnackbarOpen(true);
     }
-  }, [selectedThread]);
+  }, [threadId]); // Use threadId as a dependency
 
   useEffect(() => {
     if (selectedThread !== null) {
@@ -326,20 +357,6 @@ export default function App() {
                   >
                     Messages
                   </Typography>
-                  <FontAwesomeIcon
-                    style={{
-                      paddingBottom: "12px",
-                      paddingLeft: "43px",
-                    }}
-                    icon={faEllipsisVertical}
-                    size="sm"
-                    id="demo-customized-button"
-                    aria-controls={open ? "demo-customized-menu" : undefined}
-                    aria-haspopup="true"
-                    disableElevation
-                    aria-expanded={open ? "true" : undefined}
-                    onClick={handleClick}
-                  />
                 </Toolbar>
               </AppBar>
               <AppBar component="nav" position="sticky">
@@ -375,7 +392,10 @@ export default function App() {
                           onClick={() => handleOpenThread(index)}
                           sx={{
                             bgcolor:
-                              selectedThread === index ? "action.selected" : "",
+                              threadId ===
+                              `${firstMessage.sender}-${firstMessage.recipient}`
+                                ? "action.selected"
+                                : "",
                           }}
                         >
                           <ListItemAvatar>
@@ -516,12 +536,6 @@ export default function App() {
                     </Typography>
 
                     <FontAwesomeIcon
-                      style={{ paddingBottom: "12px" }}
-                      icon={faBell}
-                      size="sm"
-                    />
-
-                    <FontAwesomeIcon
                       style={{
                         paddingBottom: "12px",
                         paddingLeft: "43px",
@@ -568,7 +582,7 @@ export default function App() {
                   </Toolbar>
                 </AppBar>
 
-                <Box>
+                <Box sx={{ mb: 7 }}>
                   {threads[selectedThread].map((message, index) => (
                     <Box
                       key={index}
@@ -719,6 +733,14 @@ export default function App() {
           </Grid>
         </Grid>
       </Box>
+
+      {/* Snackbar for "Deleted successfully" */}
+      <Snackbar
+        open={snackbarOpen}
+        autoHideDuration={3000}
+        onClose={() => setSnackbarOpen(false)}
+        message="Deleted successfully"
+      />
     </div>
   );
 }
