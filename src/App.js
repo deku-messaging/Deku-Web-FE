@@ -591,7 +591,7 @@ export default function App() {
                         flexDirection: "column",
                         alignItems:
                           message.sender === "Me" ? "flex-end" : "flex-start",
-                        py: 1,
+                        py: 2,
                         px: 2,
                         mt: 2,
                       }}

@@ -1,7 +1,7 @@
 import React from "react";
 import ReactDOM from "react-dom/client";
 import "./index.css";
-import { BrowserRouter, Routes, Route } from "react-router-dom";
+import { createBrowserRouter, RouterProvider } from "react-router-dom";
 import App from "./App";
 import reportWebVitals from "./reportWebVitals";
 import CssBaseline from "@mui/material/CssBaseline";
@@ -10,6 +10,17 @@ import { createTheme, ThemeProvider } from "@mui/material/styles";
 import useMediaQuery from "@mui/material/useMediaQuery";
 
 export default function Index() {
+  const router = createBrowserRouter([
+    {
+      path: "/auth",
+      element: <Auth />,
+    },
+    {
+      path: "/",
+      element: <App />,
+    },
+  ]);
+
   // Theme
   const prefersDarkMode = useMediaQuery("(prefers-color-scheme: dark)");
 
@@ -27,13 +38,7 @@ export default function Index() {
     <ThemeProvider theme={theme}>
       <React.StrictMode>
         <CssBaseline />
-        <BrowserRouter>
-          <Routes>
-            <Route path="/" element={<App />}>
-              <Route index element={<Auth />} />
-            </Route>
-          </Routes>
-        </BrowserRouter>
+        <RouterProvider router={router} />
       </React.StrictMode>
     </ThemeProvider>
   );

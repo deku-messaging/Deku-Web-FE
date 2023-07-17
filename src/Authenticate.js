@@ -5,9 +5,17 @@ import QRCode from "react-qr-code";
 import CssBaseline from "@mui/material/CssBaseline";
 import icon from "./Icon.png";
 import Switch from "@mui/material/Switch";
+import { useNavigate } from "react-router-dom";
 
 const label = { inputProps: { "aria-label": "Switch demo" } };
+
 function Auth() {
+  const navigate = useNavigate();
+
+  const handleClick = () => {
+    navigate("/");
+  };
+
   return (
     <>
       <CssBaseline />
@@ -18,7 +26,6 @@ function Auth() {
           pl: 15,
         }}
       >
-        {" "}
         <Box
           sx={{
             display: "flex",
@@ -70,7 +77,7 @@ function Auth() {
               color: "text.secondary",
             }}
           >
-            Don't have Messages on your phone?{" "}
+            Don't have Deku Messenger on your phone?{" "}
             <a
               href="https://smswithoutborders.com"
               style={{ color: "#9BBFF2" }}
@@ -92,6 +99,7 @@ function Auth() {
               title="DekuMessaging"
               value="https://smswithoutborders.com"
               size="100%"
+              onClick={handleClick}
             />
           </Box>
           <Box
