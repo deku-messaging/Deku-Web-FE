@@ -1,12 +1,18 @@
-import Messages from "./Messages";
-import { SocketProvider } from "./SocketContext";
+import { SocketProvider, MainProvider } from "./contexts";
+import Layout from "./Layout";
+import { ThreadList, ThreadView } from "./components";
 
-function App() {
+const App = () => {
 	return (
 		<SocketProvider>
-			<Messages />
+			<MainProvider>
+				<Layout>
+					<ThreadList />
+					<ThreadView />
+				</Layout>
+			</MainProvider>
 		</SocketProvider>
 	);
-}
+};
 
 export default App;

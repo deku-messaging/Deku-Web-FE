@@ -3,7 +3,7 @@ import "./App.css";
 import { Box, Typography, Grid, List, ListItem, AppBar } from "@mui/material";
 import QRCode from "react-qr-code";
 import CssBaseline from "@mui/material/CssBaseline";
-import icon from "./Icon.png";
+import icon from "./assets/Icon.png";
 import Switch from "@mui/material/Switch";
 import { useNavigate } from "react-router-dom";
 
