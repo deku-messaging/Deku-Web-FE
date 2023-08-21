@@ -12,12 +12,12 @@ import useMediaQuery from "@mui/material/useMediaQuery";
 export default function Index() {
 	const router = createBrowserRouter([
 		{
-			path: "/auth",
-			element: <Auth />,
-		},
-		{
 			path: "/",
 			element: <App />,
+		},
+		{
+			path: "/auth",
+			element: <Auth />,
 		},
 	]);
 

@@ -1,0 +1,30 @@
+version: '3.9'
+
+services:
+
+  dev:
+    build:
+      context: .
+      dockerfile: Dockerfile
+      target: development
+      args:
+        WEBSOCKET_URL: ${WEBSOCKET_URL}
+    env_file:
+      - .env
+    ports:
+      - "4001:80"
+
+  prod:
+    build:
+      context: . 
+      dockerfile: Dockerfile
+      target: production
+      args:
+        WEBSOCKET_URL: ${WEBSOCKET_URL}
+        SSL_ENABLE: ${SSL_ENABLE}
+        SSL_CRT_FILE: ${SSL_CRT_FILE}
+        SSL_KEY_FILE: ${SSL_KEY_FILE}      
+    env_file:
+      - .env
+    ports:
+     - "4000:443"
