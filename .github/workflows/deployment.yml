@@ -32,7 +32,7 @@ jobs:
             echo "========================="
             echo "🚀 Building project ..."
             echo "========================="
-            if ! docker compose up -d dev; then
+            if ! docker compose up -d prod; then
               echo "❌ Error building project!"
               exit 1
             fi
