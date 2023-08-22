@@ -4,10 +4,13 @@ import React, {
 	useEffect,
 	useState,
 	useCallback,
+	useContext,
 } from "react";
 import { Snackbar, Alert, Button, Typography, Box } from "@mui/material";
 import useWebSocket, { ReadyState } from "react-use-websocket";
 import iphoneding from "../assets/iphoneding.mp3";
+import { AuthContext } from "./AuthContext";
+import storage from "../utils/storage";
 
 const SocketContext = createContext();
 
@@ -41,12 +44,14 @@ const messageReducer = (state, action) => {
 
 const SocketProvider = ({ children }) => {
 	const [socketUrl, setSocketUrl] = useState(SOCKET_URL);
+	const { isAuthenticated, setIsAuthenticated } = useContext(AuthContext);
 	const [messages, dispatch] = useReducer(messageReducer, []);
 	const [isConnected, setIsConnected] = useState(false);
 	const [reconnectCountdown, setReconnectCountdown] = useState(null);
 	const [notificationPermission, setNotificationPermission] = useState(
 		Notification.permission
 	);
+	const [sessionId, setSessionId] = useState(null);
 
 	const reconnectInterval = 10000;
 
@@ -99,10 +104,34 @@ const SocketProvider = ({ children }) => {
 
 	useEffect(() => {
 		if (lastJsonMessage !== null) {
-			if (messages.length > 0) {
-				dispatch({ type: "received", payload: lastJsonMessage.smsList });
+			if (!isAuthenticated) {
+				if (lastJsonMessage.session_id) {
+					setSessionId(lastJsonMessage.session_id);
+				}
+
+				if (lastJsonMessage.from_session_id) {
+					storage.setStorage(
+						"from_session_id",
+						lastJsonMessage.from_session_id
+					);
+					storage.setStorage("data", lastJsonMessage.data);
+					setSessionId(null);
+					setIsAuthenticated(true);
+				}
 			} else {
-				dispatch({ type: "initial", payload: lastJsonMessage.smsList });
+				if (messages.length > 0) {
+					if (lastJsonMessage.data) {
+						storage.setStorage("data", lastJsonMessage.data);
+					}
+					const data = storage.getFromStorage("data");
+					dispatch({ type: "received", payload: data.smsList });
+				} else {
+					if (lastJsonMessage.data) {
+						storage.setStorage("data", lastJsonMessage.data);
+					}
+					const data = storage.getFromStorage("data");
+					dispatch({ type: "initial", payload: data.smsList });
+				}
 			}
 		}
 	}, [lastJsonMessage]);
@@ -160,6 +189,7 @@ const SocketProvider = ({ children }) => {
 				messages,
 				isConnected,
 				SendMessage,
+				sessionId,
 			}}
 		>
 			{children}
