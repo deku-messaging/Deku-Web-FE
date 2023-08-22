@@ -18,6 +18,7 @@ services:
     volumes:
       - "${SSL_CRT_FILE:?err}:/usr/local/apache2/conf/server.crt"
       - "${SSL_KEY_FILE:?err}:/usr/local/apache2/conf/server.key"
+      - "${SSL_KEY_FILE:?err}:/usr/local/apache2/conf/server.pem"
     build:
       context: . 
       dockerfile: Dockerfile
