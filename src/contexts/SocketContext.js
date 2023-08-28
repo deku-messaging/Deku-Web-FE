@@ -43,20 +43,17 @@ const messageReducer = (state, action) => {
 };
 
 const SocketProvider = ({ children }) => {
-	const [socketUrl, setSocketUrl] = useState(SOCKET_URL);
 	const { isAuthenticated, setIsAuthenticated } = useContext(AuthContext);
 	const [messages, dispatch] = useReducer(messageReducer, []);
 	const [isConnected, setIsConnected] = useState(false);
 	const [reconnectCountdown, setReconnectCountdown] = useState(null);
-	const [notificationPermission, setNotificationPermission] = useState(
-		Notification.permission
-	);
+
 	const [sessionId, setSessionId] = useState(null);
 
 	const reconnectInterval = 10000;
 
 	const { sendJsonMessage, lastJsonMessage, readyState } = useWebSocket(
-		socketUrl,
+		SOCKET_URL,
 		{
 			onOpen: () => {
 				setIsConnected(true);
@@ -79,12 +76,6 @@ const SocketProvider = ({ children }) => {
 		}
 	);
 
-	const requestNotificationPermission = () => {
-		Notification.requestPermission().then((permission) => {
-			setNotificationPermission(permission);
-		});
-	};
-
 	const SendMessage = useCallback((content) => {
 		console.log(content);
 		sendJsonMessage(content);
@@ -93,14 +84,6 @@ const SocketProvider = ({ children }) => {
 	const handleReconnectClick = () => {
 		window.location.reload();
 	};
-
-	useEffect(() => {
-		if ("Notification" in window) {
-			if (notificationPermission === "default") {
-				requestNotificationPermission();
-			}
-		}
-	}, [notificationPermission]);
 
 	useEffect(() => {
 		if (lastJsonMessage !== null) {

@@ -12,12 +12,14 @@ import {
 	Typography,
 	Skeleton,
 } from "@mui/material";
+import { Logout } from "@mui/icons-material";
 
 import { formatDistanceToNow } from "date-fns";
 
 import { MainContext } from "../contexts";
 import { getThreadLabel } from "../utils/threadUtils";
 import ThreadAppBar from "./ThreadAppBar";
+import storage from "../utils/storage";
 
 const colorPicker = (char = "a") => {
 	const colors = [
@@ -76,9 +78,19 @@ const ThreadList = () => {
 		</Fragment>
 	);
 
+	const handleLogout = () => {
+		storage.removeFromStorage("from_session_id");
+		storage.removeFromStorage("data");
+		window.location.reload();
+	};
+
+	const menuItems = [
+		{ label: "Logout", icon: <Logout />, onClick: handleLogout },
+	];
+
 	return (
 		<Fragment>
-			<ThreadAppBar title={"Messages"} />
+			<ThreadAppBar title={"Messages"} menuItems={menuItems} />
 			<List sx={{ height: "90vh", overflow: "auto" }}>
 				{threads.length === 0
 					? Array.from({ length: 5 }).map((_, index) => (
